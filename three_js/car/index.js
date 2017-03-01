@@ -3,12 +3,12 @@
 	var scene = new THREE.Scene();
 	var cube = null;
 	var alpha = 0;
-	renderer.setSize(1000,800);//设置画布大小
+	renderer.setSize(1600,1080);//设置画布大小
 	renderer.setClearColor(0x848484);//设置背景颜色
 	document.getElementsByTagName('body')[0].appendChild(renderer.domElement);
 	renderer.shadowMapEnabled = true;
 	renderer.shadowMapSoft = true;
-	var camera = new THREE.OrthographicCamera(-25, 25, 20, -20,1, 50);
+	var camera = new THREE.OrthographicCamera(-10, 10, 8, -8,1, 50);
 			   camera.position.set(5, 15, 25);
 			   camera.lookAt(new THREE.Vector3(0, 0, 0));
 			   scene.add(camera);
@@ -24,23 +24,25 @@
 	// // light.target = cube;
 	// scene.add(light);
 	//
-	var cube = new THREE.Mesh(new THREE.CubeGeometry(6,4,4),new THREE.MeshLambertMaterial({
-			color: 0xcccccc,
+	var cube = new THREE.Mesh(new THREE.CubeGeometry(6,4,4),new THREE.MeshPhongMaterial({
+			color: 0xa8a8a8,
 			// emissive: 0xffffff
         }));
 		// cube.position.set(0,0,0);
+		cube.rotation.y = -Math.PI / 50;
 	 	cube.receiveShadow = true;
 		cube.castShadow = true;
 		scene.add(cube);
-		var cicle = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshBasicMaterial({
-		         color: 0xffffff,
+		var cicle = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshPhongMaterial({
+		         color: 0xa8a8a8,
 		     }));
-		var cicle1 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshBasicMaterial({
-		 	     color: 0xffffff,
+		var cicle1 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshPhongMaterial({
+		 	     color: 0xa8a8a8,
 		 	 }));
-
-		cicle.position.set(2,-2,2);
+		cicle.position.set(2,-2,2.3);
 		cicle1.position.set(-2,-2,2);
+		cicle.rotation.y = -Math.PI / 50;
+		cicle1.rotation.y = -Math.PI / 50;
 		cicle.castShadow = true;
 		cicle1.castShadow = true;
 		scene.add(cube);
