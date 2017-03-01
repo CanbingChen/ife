@@ -1,164 +1,83 @@
 (function(){
 	var renderer = new THREE.WebGLRenderer();
 	var scene = new THREE.Scene();
-	renderer.setSize(400,300);//设置画布大小
+	var cube = null;
+	var alpha = 0;
+	renderer.setSize(1000,800);//设置画布大小
 	renderer.setClearColor(0x848484);//设置背景颜色
 	document.getElementsByTagName('body')[0].appendChild(renderer.domElement);
-	var camera = new THREE.OrthographicCamera(-5, 5, 3.75, -3.75, 0.1, 100);
-			   camera.position.set(20, 25, 25);
+	renderer.shadowMapEnabled = true;
+	renderer.shadowMapSoft = true;
+	var camera = new THREE.OrthographicCamera(-25, 25, 20, -20,1, 50);
+			   camera.position.set(5, 15, 25);
 			   camera.lookAt(new THREE.Vector3(0, 0, 0));
 			   scene.add(camera);
-	var light = new THREE.PointLight(0xffffff, 1, 100);
-	light.position.set(10, 50, 10);
-	scene.add(light);
+	var plane = new THREE.Mesh(new THREE.PlaneGeometry(50, 50, 16, 16),
+	new THREE.MeshLambertMaterial({color: 0x00ff00}));
+	plane.rotation.x = -Math.PI / 2;
+	plane.position.y = -5;
+	plane.receiveShadow = true;
+	scene.add(plane);
+	// var light = new THREE.SpotLight(0xffffff, 1, 100);
+	// light.target.position.set(10, 50, 10);
+	// light.castShadow = true;
+	// // light.target = cube;
+	// scene.add(light);
+	//
 	var cube = new THREE.Mesh(new THREE.CubeGeometry(6,4,4),new THREE.MeshLambertMaterial({
-			color: 0xffffff,
+			color: 0xcccccc,
 			// emissive: 0xffffff
         }));
-	var cicle = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.3,20,28),new THREE.MeshBasicMaterial({
-	         color: 0xffffff,
-	     }));
-	var cicle1 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.3,20,28),new THREE.MeshBasicMaterial({
-	 	     color: 0xffffff,
-	 	 }));
-	cicle.position.set(3,-0.8,3);
-	cicle1.position.set(-2,-0.8,3);
-	scene.add(cube);
-	scene.add(cicle);
-	scene.add(cicle1);
-	renderer.render(scene, camera);
+		// cube.position.set(0,0,0);
+	 	cube.receiveShadow = true;
+		cube.castShadow = true;
+		scene.add(cube);
+		var cicle = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshBasicMaterial({
+		         color: 0xffffff,
+		     }));
+		var cicle1 = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.2,20,28),new THREE.MeshBasicMaterial({
+		 	     color: 0xffffff,
+		 	 }));
+
+		cicle.position.set(2,-2,2);
+		cicle1.position.set(-2,-2,2);
+		cicle.castShadow = true;
+		cicle1.castShadow = true;
+		scene.add(cube);
+		scene.add(cicle);
+		scene.add(cicle1);
+		var light = new THREE.SpotLight(0xffff00, 1, 100, Math.PI / 6, 25);
+		light.position.set(-8, 10, 10);
+		light.target = cube;
+		light.castShadow = true;//设置生成动态阴影
+		light.shadowCameraNear = 2;
+		light.shadowCameraFar = 10;
+		light.shadowCameraFov = 30;
+		light.shadowCameraVisible = true;
+		light.shadowMapWidth = 1024;
+		light.shadowMapHeight = 1024;
+		light.shadowDarkness = 0.3;
+		scene.add(light);
+
+		var ambient = new THREE.AmbientLight(0x666666);
+		scene.add(ambient);
+
+		requestAnimationFrame(draw);
+		function draw() {
+			alpha = 0.01;
+			if (alpha > Math.PI * 2) {
+				alpha -= Math.PI * 2;
+			}
+
+			// plane.position.set(2 * Math.cos(alpha), -5, 2 * Math.sin(alpha));
+
+			cube.position.set(cube.position.x+alpha,cube.position.y,cube.position.z+alpha);
+			cicle.position.set(cicle.position.x+alpha,cicle.position.y,cicle.position.z+alpha);
+			cicle1.position.set(cicle1.position.x+alpha,cicle1.position.y,cicle1.position.z+alpha);
+			renderer.render(scene, camera);
+			if(cube.position.x<10){
+				requestAnimationFrame(draw);
+			}
+
+		}
 })()
-// window.onload = function() {
-//     var renderer = new THREE.WebGLRenderer();
-//     var scene = new THREE.Scene();
-//     renderer.setSize(400, 300); //设置画布大小
-//     //renderer.setClearColor(0x848484); //设置背景颜色
-//     // camera
-//     var camera = new THREE.OrthographicCamera(-5, 5, 3.75, -3.75, 0.1, 100);
-//     camera.position.set(25, 25, 25);
-//     camera.lookAt(new THREE.Vector3(0, 0, 0));
-//     scene.add(camera);
-//
-//     // draw axes to help you understand the coordinate
-//     drawAxes(scene);
-//
-//     var material = new THREE.MeshBasicMaterial({
-//         color: 0xffff00,
-//         wireframe: true
-//     });
-//
-//     drawCube(scene, material);
-//     drawPlane(scene, material);
-//     drawSphere(scene, material);
-//     drawCircle(scene, material);
-//     drawCylinder(scene, material);
-//     drawTetra(scene, material);
-//     drawOcta(scene, material);
-//     drawIcosa(scene, material);
-//     drawTorus(scene, material);
-//     drawTorusKnot(scene, material);
-//
-//     // render
-//     renderer.render(scene, camera);
-// }
-
-function drawCube(scene, material) {
-    var cube = new THREE.Mesh(new THREE.CubeGeometry(1, 2, 3, 2, 2, 3), material);
-    scene.add(cube);
-}
-
-function drawPlane(scene, material) {
-    var plane = new THREE.Mesh(new THREE.PlaneGeometry(2, 4), material);
-    scene.add(plane);
-}
-
-function drawSphere(scene, material) {
-    var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6), material);
-    // var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6,
-    //      0, Math.PI * 2, Math.PI / 6, Math.PI / 2), material);
-    // var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6,
-    //      Math.PI / 2, Math.PI, Math.PI / 6, Math.PI / 2), material);
-    // var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6,
-    //      Math.PI / 6, Math.PI / 3), material);
-    // var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6,
-    //      0, Math.PI * 2, Math.PI / 6, Math.PI / 3), material);
-    // var sphere = new THREE.Mesh(new THREE.SphereGeometry(3, 8, 6,
-    //      Math.PI / 2, Math.PI, Math.PI / 6, Math.PI / 2), material);
-    scene.add(sphere);
-}
-
-function drawCircle(scene, material) {
-    var circle = new THREE.Mesh(new THREE.CircleGeometry(3, 18, Math.PI / 3, Math.PI / 3 * 4), material);
-    scene.add(circle);
-}
-
-function drawCylinder(scene, material) {
-    var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 4, 18, 3), material);
-    // var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(2, 3, 4, 18, 3), material);
-    // var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(2, 3, 4, 18, 3, true), material);
-    scene.add(cylinder);
-}
-
-function drawTetra(scene, material) {
-    var tetra = new THREE.Mesh(new THREE.TetrahedronGeometry(3), material);
-    scene.add(tetra);
-}
-
-function drawOcta(scene, material) {
-    var octa = new THREE.Mesh(new THREE.OctahedronGeometry(3), material);
-    scene.add(octa);
-}
-
-function drawIcosa(scene, material) {
-    var icosa = new THREE.Mesh(new THREE.IcosahedronGeometry(3), material);
-    scene.add(icosa);
-}
-
-function drawTorus(scene, material) {
-    var torus = new THREE.Mesh(new THREE.TorusGeometry(3, 1, 4, 8), material);
-    // var torus = new THREE.Mesh(new THREE.TorusGeometry(3, 1, 12, 18), material);
-    // var torus = new THREE.Mesh(new THREE.TorusGeometry(3, 1, 4, 8, Math.PI / 3 * 2), material);
-    scene.add(torus);
-}
-
-function drawTorusKnot(scene, material) {
-    var torus = new THREE.Mesh(new THREE.TorusKnotGeometry(2, 0.5, 32, 8), material);
-    scene.add(torus);
-}
-
-function drawTube(scene, material) {
-    var tube = new THREE.Mesh(new THREE.TubeGeometry(1, 0.5), material);
-    scene.add(tube);
-}
-
-function drawAxes(scene) {
-    // x-axis
-    var xGeo = new THREE.Geometry();
-    xGeo.vertices.push(new THREE.Vector3(0, 0, 0));
-    xGeo.vertices.push(new THREE.Vector3(3, 0, 0));
-    var xMat = new THREE.LineBasicMaterial({
-        color: 0xff0000
-    });
-    var xAxis = new THREE.Line(xGeo, xMat);
-    scene.add(xAxis);
-
-    // y-axis
-    var yGeo = new THREE.Geometry();
-    yGeo.vertices.push(new THREE.Vector3(0, 0, 0));
-    yGeo.vertices.push(new THREE.Vector3(0, 3, 0));
-    var yMat = new THREE.LineBasicMaterial({
-        color: 0x00ff00
-    });
-    var yAxis = new THREE.Line(yGeo, yMat);
-    scene.add(yAxis);
-
-    // z-axis
-    var zGeo = new THREE.Geometry();
-    zGeo.vertices.push(new THREE.Vector3(0, 0, 0));
-    zGeo.vertices.push(new THREE.Vector3(0, 0, 3));
-    var zMat = new THREE.LineBasicMaterial({
-        color: 0x00ccff
-    });
-    var zAxis = new THREE.Line(zGeo, zMat);
-    scene.add(zAxis);
-}
